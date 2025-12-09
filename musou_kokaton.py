@@ -417,11 +417,11 @@ def main():
         emys.draw(screen)
         bombs.update()
         bombs.draw(screen)
-        exps.update()
-        exps.draw(screen)
 
         gravities.update()
         gravities.draw(screen)
+        exps.update()
+        exps.draw(screen)
         
         emps.update()
         emps.draw(screen)
@@ -437,4 +437,5 @@ if __name__ == "__main__":
     main()
     pg.quit()
     sys.exit()
+
 
