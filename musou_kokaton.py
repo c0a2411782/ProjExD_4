@@ -284,10 +284,10 @@ class shield(pg.sprite.Sprite):
     def __init__(self, bird, life = 400):
         super().__init__()
         w, h = 20, bird.rect.height * 2
-        self.image = pg.Surface((w, h))
+        self.image = pg.Surface((w, h), pg.SRCALPHA)
         pg.draw.rect(self.image, (0, 0, 255), (0, 0, w, h))
         vx, vy = bird.dire
-        angel = math.degrees(math.atan2(vy, vx))
+        angel = math.degrees(math.atan2(-vy, vx))
         self.image = pg.transform.rotozoom(self.image, angel, 1.0)
         self.rect = self.image.get_rect()
         offset = max(bird.rect.width, bird.rect.height)
@@ -419,11 +419,12 @@ def main():
         bombs.draw(screen)
         exps.update()
         exps.draw(screen)
-        emps.update()
-        emps.draw(screen)
 
         gravities.update()
         gravities.draw(screen)
+        
+        emps.update()
+        emps.draw(screen)
 
         score.update(screen)
         pg.display.update()
@@ -436,3 +437,4 @@ if __name__ == "__main__":
     main()
     pg.quit()
     sys.exit()
+
