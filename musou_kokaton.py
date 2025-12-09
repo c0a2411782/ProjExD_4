@@ -136,13 +136,17 @@ class Beam(pg.sprite.Sprite):
     """
     ビームに関するクラス
     """
-    def __init__(self, bird: Bird):
+    def __init__(self, bird: Bird, angle0 = 0):
+        """
+        ビーム画像Surfaceを生成する
+        引数 bird：ビームを放つこうかとん
+        """
         super().__init__()
         self.vx, self.vy = bird.dire
         angle = math.degrees(math.atan2(-self.vy, self.vx))
-        self.image = pg.transform.rotozoom(pg.image.load(f"fig/beam.png"), angle, 1.0)
-        self.vx = math.cos(math.radians(angle))
-        self.vy = -math.sin(math.radians(angle))
+        self.image = pg.transform.rotozoom(pg.image.load(f"fig/beam.png"), angle + angle0, 1.0)
+        self.vx = math.cos(math.radians(angle + angle0))
+        self.vy = -math.sin(math.radians(angle + angle0))
         self.rect = self.image.get_rect()
         self.rect.centery = bird.rect.centery+bird.rect.height*self.vy
         self.rect.centerx = bird.rect.centerx+bird.rect.width*self.vx
@@ -152,6 +156,34 @@ class Beam(pg.sprite.Sprite):
         self.rect.move_ip(self.speed*self.vx, self.speed*self.vy)
         if check_bound(self.rect) != (True, True):
             self.kill()
+
+
+class NeoBeam(pg.sprite.Sprite):
+    """
+    弾幕に関するクラス
+    """
+    def __init__(self, bird: Bird, num: int):
+        """
+        弾幕を生成する
+        引数1 bird：ビームを放つこうかとん
+        引数2 num：一度に発射されるビームの数
+        """
+        super().__init__()
+        self.bird = bird
+        self.num = num
+    
+    def gen_beams(self):
+        """
+        ビームを生成する
+        射撃角度を指定してBeamクラスを呼び出す
+        """
+        beams = []
+        for arg in range(-30, 31, int(60/(self.num-1))):
+            angle0 = arg
+            beam = Beam(self.bird, angle0)
+            beams.append(beam)
+        return beams
+
 
 
 class Explosion(pg.sprite.Sprite):
@@ -313,6 +345,12 @@ def main():
             if event.type == pg.QUIT:
                 return 0
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                if pg.key.get_pressed()[pg.K_LSHIFT]:
+                    nb = NeoBeam(bird, 5)
+                    dmk = nb.gen_beams()
+                    beams.add(dmk)
+                else:
+                    beams.add(Beam(bird))
                 beams.add(Beam(bird))
             if event.type == pg.KEYDOWN and event.key == pg.K_e:
                 if score.value >= 20 and len(emps) == 0:
